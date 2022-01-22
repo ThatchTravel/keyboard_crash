@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:keyboard_crash/src/editor/model.dart';
 import 'package:provider/provider.dart';
 
 import 'board_editor_viewmodel.dart';
@@ -14,26 +15,26 @@ class NodeItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<BoardEditorViewModel>(
-      builder: (context, viewModel, child) {
-        final block = viewModel.details[index];
-        final node = viewModel.getEditorNode(block.uid);
-
-        return ReorderableShortDelayDragStartListener(
-          key: ValueKey('reorder-block-item-${block.uid}'),
-          // enabled: !node.focus.hasPrimaryFocus,
-          index: index,
-          child: TextField(
-            autofocus: node.focus.hasPrimaryFocus,
-            focusNode: node.focus,
-            textInputAction: TextInputAction.newline,
-            textCapitalization: TextCapitalization.sentences,
-            maxLines: null,
-            controller: node.controller,
-            onChanged: node.onChanged,
-          ),
-        );
-      },
+    // return TextField(controller: controller);
+    final block = context.select<BoardEditorViewModel, BoardBlock>(
+      (viewModel) => viewModel.details[index],
+    );
+    final node = context.select<BoardEditorViewModel, EditorNode>(
+      (viewModel) => viewModel.getEditorNode(block.uid),
+    );
+    return ReorderableShortDelayDragStartListener(
+      key: ValueKey('reorder-block-item-${block.uid}'),
+      // enabled: !node.focus.hasPrimaryFocus,
+      index: index,
+      child: TextField(
+        autofocus: node.focus.hasPrimaryFocus,
+        focusNode: node.focus,
+        textInputAction: TextInputAction.newline,
+        textCapitalization: TextCapitalization.sentences,
+        maxLines: null,
+        controller: node.controller,
+        onChanged: node.onChanged,
+      ),
     );
   }
 }
