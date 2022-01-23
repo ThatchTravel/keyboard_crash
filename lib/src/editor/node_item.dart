@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:keyboard_crash/src/editor/model.dart';
 import 'package:provider/provider.dart';
 
 import 'board_editor_viewmodel.dart';
@@ -15,25 +14,36 @@ class NodeItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return TextField(controller: controller);
-    final block = context.select<BoardEditorViewModel, BoardBlock>(
-      (viewModel) => viewModel.details[index],
-    );
-    final node = context.select<BoardEditorViewModel, EditorNode>(
-      (viewModel) => viewModel.getEditorNode(block.uid),
-    );
+    // final block = context.select<BoardEditorViewModel, BoardBlock>(
+    //   (viewModel) => viewModel.details[index],
+    // );
+    print("Node item build ${index}");
     return ReorderableShortDelayDragStartListener(
-      key: ValueKey('reorder-block-item-${block.uid}'),
+      key: ValueKey('reorder-block-item-${index}'),
       // enabled: !node.focus.hasPrimaryFocus,
       index: index,
       child: TextField(
-        autofocus: node.focus.hasPrimaryFocus,
-        focusNode: node.focus,
+        autofocus: context.select<BoardEditorViewModel, bool>(
+          (viewModel) => viewModel
+              .getEditorNode(viewModel.details[index].uid)
+              .focus
+              .hasPrimaryFocus,
+        ),
+        focusNode: context.select<BoardEditorViewModel, FocusNode>(
+          (viewModel) =>
+              viewModel.getEditorNode(viewModel.details[index].uid).focus,
+        ),
         textInputAction: TextInputAction.newline,
         textCapitalization: TextCapitalization.sentences,
         maxLines: null,
-        controller: node.controller,
-        onChanged: node.onChanged,
+        controller: context.select<BoardEditorViewModel, TextEditingController>(
+          (viewModel) =>
+              viewModel.getEditorNode(viewModel.details[index].uid).controller,
+        ),
+        onChanged: context.select<BoardEditorViewModel, Function(String)?>(
+          (viewModel) =>
+              viewModel.getEditorNode(viewModel.details[index].uid).onChanged,
+        ),
       ),
     );
   }

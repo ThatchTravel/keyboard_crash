@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -196,7 +195,7 @@ class EditorNode {
   }
 
   void onChanged(String value) {
-    _log.info('EditorNode.onChanged($value)');
+    // _log.info('EditorNode.onChanged($value)');
     if (text != value) {
       text = value;
       onTextChanged(this);
